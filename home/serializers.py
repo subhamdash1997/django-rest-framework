@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student
+from .models import *
 
 class StudentSerializer(serializers.ModelSerializer):
     
@@ -18,3 +18,16 @@ class StudentSerializer(serializers.ModelSerializer):
 
         return data
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        
+        
+class BookSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    class Meta:
+        model = Book
+        fields = '__all__'
+        
+    

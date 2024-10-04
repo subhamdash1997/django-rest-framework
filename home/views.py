@@ -4,6 +4,23 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 
+
+@api_view(['GET'])
+def get_categories(request):
+    categories = Category.objects.all()
+    serializer = CategorySerializer(categories,many=True)
+    return Response({'status':200,'payload':serializer.data})
+
+
+@api_view(['GET'])
+def get_books(request):
+    book_objs = Book.objects.all()
+    serializer = BookSerializer(book_objs,many=True)
+    return Response({'status':200,'payload':serializer.data})
+
+
+
+
 # Create your views here.
 @api_view(['GET'])
 def home(request):
