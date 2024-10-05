@@ -4,10 +4,33 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
+# from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+
+class RegisterUser(APIView):
+    def post(self,request):
+        serializer = UserSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'status':403,'message':'something went wrong.'})
+        serializer.save()
+        user = User.objects.get(username=serializer.data['username'])
+        # token_obj,_=Token.objects.get_or_create(user=user)
+        refresh = RefreshToken.for_user(user)
+        return Response({'status':201,'payload':serializer.data,'refresh':str(refresh),'access':str(refresh.access_token),'message':'saved successfully.'})
 
 
 class StudentAPI(APIView):
+    
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self,request):
         student_objs = Student.objects.all()
         serializer = StudentSerializer(student_objs,many=True)
